@@ -44,10 +44,11 @@ class Products with ChangeNotifier{
      return [..._items];
   }
 
-  // void addProduct () {
-
-  //   notifyListeners();
-  // }
+  void addProduct (Product product) {
+     final newProduct = Product(id: DateTime.now().toString(), title: product.title, description: product.description, imageUrl: product.imageUrl, price: product.price);
+     _items.add(newProduct);
+     notifyListeners();
+   }
   void showFavorites (){
   showFavoritesOnly =true; 
   notifyListeners(); 
@@ -55,5 +56,9 @@ class Products with ChangeNotifier{
   void showAll () {
     showFavoritesOnly =false;
     notifyListeners();
+  }
+  void deleteItem(String id){
+     _items.removeWhere((prod) => prod.id == id);
+     notifyListeners();
   }
 }

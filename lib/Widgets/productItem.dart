@@ -14,7 +14,7 @@ class ProductItem extends StatelessWidget {
     final product = Provider.of<Product>(context, listen: false);
     final cart  = Provider.of<Cart>(context, listen: false);
 
-    print('Widget rebuilt');
+  
     return ClipRRect(
         borderRadius: BorderRadius.circular(10),
           child: GridTile( 
@@ -42,6 +42,16 @@ class ProductItem extends StatelessWidget {
             icon: Icon(Icons.shopping_cart), 
             onPressed: (){
             cart.addItem(product.id, product.price, product.title);
+            Scaffold.of(context).hideCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Added Product to cart!'),
+                duration: Duration(seconds: 3),
+                action: SnackBarAction(label: "Undo", onPressed: (){
+                  cart.removeSingleItem(product.id);
+                }),
+              ),
+            );
             },
             color: Theme.of(context).accentColor,
             )
