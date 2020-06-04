@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-class CartModel with ChangeNotifier{
+class CartModel{
   final String id;
   final String title;
   final int quantity;
@@ -47,6 +47,22 @@ void addItem(String productId,double price,String title) {
     );
   }
 
+  notifyListeners();
+}
+void removeSingleItem(String productId){
+  if(!_items.containsKey(productId)){
+    return;
+  }
+  if(_items[productId].quantity >1){
+    _items.update(productId, (existingItem)=> CartModel(
+    id: existingItem.id,
+    title: existingItem.title,
+    price: existingItem.price,
+    quantity: existingItem.quantity - 1));
+  }
+  else{
+    _items.remove(productId);
+  }
   notifyListeners();
 }
 

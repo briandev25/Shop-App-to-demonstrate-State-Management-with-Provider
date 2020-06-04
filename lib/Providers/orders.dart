@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-//import 'package:myshop_app/Providers/cart.dart';
-import '../Widgets/cartItem.dart';
+import 'package:myshop_app/Providers/cart.dart';
+//import '../Widgets/cartItem.dart';
 import './cart.dart';
 
 class OrderItem{
