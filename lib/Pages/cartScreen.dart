@@ -3,9 +3,22 @@ import 'package:provider/provider.dart';
 import '../Providers/cart.dart';
 import '../Widgets/cartItem.dart';
 import '../Providers/orders.dart';
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
 static const routeName = '/cart-page';
 
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+
+ @override
+  void initState() {
+  Future.delayed(Duration.zero).then((_){
+     Provider.of<Orders>(context).fetchandsetOrders();
+  });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
@@ -45,17 +58,46 @@ static const routeName = '/cart-page';
                  ),
                  backgroundColor: Theme.of(context).primaryColor,
                  ),
-                 FlatButton(onPressed: () {
-                   Provider.of<Orders>(context, listen: false,).addOrder(cart.items.values.toList(), cart.totalPrice);
-                 }, child: Text('Order Now', style: TextStyle(
-                   color: Theme.of(context).primaryColor,
-                 ),))
+                 OrderNowButton(cart: cart),
                ],
              ),
              ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class OrderNowButton extends StatefulWidget {
+  const OrderNowButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderNowButtonState createState() => _OrderNowButtonState();
+}
+
+class _OrderNowButtonState extends State<OrderNowButton> {
+  var _isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+          child:_isloading ? CircularProgressIndicator() : Text('Order Now'),
+      onPressed: (widget.cart.totalPrice <= 0 || _isloading) ? null : () async{
+        setState(() {
+          _isloading = true;
+        });
+     await Provider.of<Orders>(context, listen: false,).addOrder(widget.cart.items.values.toList(), widget.cart.totalPrice);
+     setState(() {
+       _isloading = false;
+     });
+     widget.cart.clear();
+    },
+    
     );
   }
 }

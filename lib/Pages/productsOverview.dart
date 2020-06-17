@@ -7,12 +7,51 @@
  import '../Widgets/productsGrid.dart';
  import './cartScreen.dart';
  import '../Widgets/drawer.dart';
+ //import '../Providers/productsProvider.dart';
+
 enum FilterOptions{
   Favorites,
   All
 }
- class ProductsOverview extends StatelessWidget {
+ class ProductsOverview extends StatefulWidget {
 
+  @override
+  _ProductsOverviewState createState() => _ProductsOverviewState();
+}
+
+class _ProductsOverviewState extends State<ProductsOverview> {
+  var _isLoading = false;
+  var _isInit = true;
+  // @override
+  // void initState() {
+  //  // Provider.of<Products>(context).fetchAndSetProducts(); 
+  //  //          WONT WORK UNLESS LISTEN SET TO FALSE
+
+  //  Future.delayed(Duration.zero).then((_){
+  //   Provider.of<Products>(context).fetchAndSetProducts(); 
+  //  });
+  //   super.initState();
+  // }
+
+  @override
+  void didChangeDependencies() {
+    if(_isInit){
+     setState(() {
+       _isLoading = true;
+          }
+       );
+       Provider.of<Products>(context).fetchAndSetProducts().then((_){
+          setState(() {
+            _isLoading = false;
+          });
+      });
+    } 
+         
+   _isInit = false;
+
+    super.didChangeDependencies();
+  }
+  
    @override
    Widget build(BuildContext context) {
      final productsChoice = Provider.of<Products>(context);
@@ -53,8 +92,10 @@ enum FilterOptions{
             ],
           ),
           drawer:MainDrawer(),
-          body: ProductGrid(),
+          body:_isLoading ? Center(
+             child: CircularProgressIndicator(),
+          ) : ProductGrid(),
      );
    }
- }
+}
 
